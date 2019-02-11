@@ -69,8 +69,7 @@ def alias(request, pk_bundle):
                 print '- Label: {}'.format(label)
                 print ' ... Opening Label ... '
                 label_list = open_label(label.label())
-                label_object = label_list[0]
-                label_root = label_list[1]
+                label_root = label_list
                 # Build Alias
                 print ' ... Building Label ... '
                 label_root = alias.build_alias(label_root)
@@ -79,7 +78,7 @@ def alias(request, pk_bundle):
 
                 # Close appropriate label(s)
                 print ' ... Closing Label ... '
-                close_label(label_object, label_root)
+                close_label(label.label(), label_root)
 
             #print alias.print_alias_list()
 
@@ -197,7 +196,7 @@ def build(request):
 
             # Create Bundle model.
             bundle = form_bundle.save(commit=False)
-	    bundle.uniqueifier = bundle.name + "_" + str(request.user.id)
+	    #bundle.uniqueifier = bundle.name + "_" + str(request.user.id)
             bundle.user = request.user
             bundle.status = 'b' # b for build.  New Bundles are always in build stage first.
             bundle.save()
@@ -217,17 +216,23 @@ def build(request):
             # templates/pds4/basecase
             print '\n---------------Start Build Product_Bundle Base Case------------------------'
             product_bundle.build_base_case()  # simply copies baseecase to user bundle directory
-            # Open label - returns a list where index 0 is the label object and 1 is the tree
+	    # Open label - returns a list where index 0 is the label object and 1 is the tree
             print ' ... Opening Label ... '
             label_list = open_label(product_bundle.label()) #list = [label_object, label_root]
-            label_object = label_list[0]
-            label_root = label_list[1]
-            # Fill label - fills 
+            label_root = label_list
+            # Fill label - fills
             print ' ... Filling Label ... '
             label_root = product_bundle.fill_base_case(label_root)
             # Close label
             print ' ... Closing Label ... '
-            close_label(label_object, label_root)           
+            close_label(product_bundle.label(), label_root) 
+	    
+
+	    fil = open(bundle.directory()+"/bundle_"+str(bundle).lower()+".xml",'r')
+	    fileText = fil.read()
+	    fil.close()
+
+	    print fileText          
             print '---------------- End Build Product_Bundle Base Case -------------------------'
   
             # Create Collections Model Object and list of Collections, list of Collectables
@@ -270,8 +275,7 @@ def build(request):
                     # Open Product_Collection label
                     print ' ... Opening Label ... '
                     label_list = open_label(product_collection.label())
-                    label_object = label_list[0]
-                    label_root = label_list[1]
+                    label_root = label_list
 
                     # Fill label
                     print ' ... Filling Label ... '
@@ -279,7 +283,7 @@ def build(request):
 
                     # Close label
                     print ' ... Closing Label ... '
-                    close_label(label_object, label_root)
+                    close_label(product_collection.label(), label_root)
                     print '-------------End Build Product_Collection Base Case-----------------'
            
             # Further develop context_dict entries for templates            
@@ -499,8 +503,7 @@ def citation_information(request, pk_bundle):
                 print '- Label: {}'.format(label)
                 print ' ... Opening Label ... '
                 label_list = open_label(label.label())
-                label_object = label_list[0]
-                label_root = label_list[1]
+                label_root = label_list
         
                 # Build Citation Information
                 print ' ... Building Label ... '
@@ -508,7 +511,7 @@ def citation_information(request, pk_bundle):
 
                 # Close appropriate label(s)
                 print ' ... Closing Label ... '
-                close_label(label_object, label_root)
+                close_label(label.label(), label_root)
 
                 print '------------- End Build Citation Information -------------------'        
         # Update context_dict with the current Citation_Information models associated with the user's bundle
@@ -591,14 +594,13 @@ def data(request, pk_bundle):
             # Open label - returns a list of label information where list = [label_object, label_root]
             print ' ... Opening Label ... '
             label_list = open_label(product_observational.label())
-            label_object = label_list[0]
-            label_root = label_list[1]
+            label_root = label_list
             # Fill label - fills 
             print ' ... Filling Label ... '
             label_root = product_observational.fill_base_case(label_root)
             # Close label
             print ' ... Closing Label ... '
-            close_label(label_object, label_root)           
+            close_label(product_observational.label(), label_root)           
             print '---------------- End Build Product_Observational Base Case-----------------------'
 
             # Update context_dict
@@ -676,14 +678,13 @@ def document(request, pk_bundle):
             # Open label - returns a list where index 0 is the label object and 1 is the tree
             print ' ... Opening Label ... '
             label_list = open_label(product_document.label())
-            label_object = label_list[0]
-            label_root = label_list[1]
+            label_root = label_list
             # Fill label - fills 
             print ' ... Filling Label ... '
             label_root = product_document.fill_base_case(label_root)
             # Close label    
             print ' ... Closing Label ... '
-            close_label(label_object, label_root)           
+            close_label(product_document.label(), label_root)           
             print '---------------- End Build Product_Document Base Case -------------------------' 
 
             # Add Document info to proper labels.  For now, I simply have Product_Bundle and Product_Collection.  This list will need to be updated.
@@ -699,8 +700,7 @@ def document(request, pk_bundle):
                 print '- Label: {}'.format(label)
                 print ' ... Opening Label ... '
                 label_list = open_label(label.label())
-                label_object = label_list[0]
-                label_root = label_list[1]
+                label_root = label_list
         
                 # Build Internal_Reference
                 print ' ... Building Internal_Reference ... '
@@ -708,7 +708,7 @@ def document(request, pk_bundle):
 
                 # Close appropriate label(s)
                 print ' ... Closing Label ... '
-                close_label(label_object, label_root)
+                close_label(label.label(), label_root)
             print '\n----------------End Build Internal_Reference for Document-------------------'
 
 
